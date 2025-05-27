@@ -36,7 +36,7 @@
             <p class="instruction" data-state="context_state">CAPTURE CONTEXT PICTURE</p>
             <p class="instruction" data-state="detail_state">CAPTURE DEFECT</p>
             <p class="instruction" data-state="confirmation_state">REPEAT / KEEP / DROP</p>
-            <p class="instruction" data-state="end_state">NEW / ADD / PRINT</p>
+            <p class="instruction" data-state="end_state">NEW PROJECT / NEW PART / ADD / PRINT</p>
         </div>
 
         <div class="screen-container"> 
@@ -58,16 +58,17 @@
                 </div>
             </div>
             <div class="standard-form-container" id="project-inspector-form-container" data-state="project_state">
-                <form class="standard-form" id="project-inspector-form">
+                <div class="standard-form" id="project-inspector-form">
                     <label for="project">PROJECT</label>
                     <select id="project" name="project" required>
                         <option value="" disabled selected>SELECT PROJECT</option>
-                        <option value="singer">SINGER</option>
+                        {% for project in projects %}
+                            <option value="{{ project|lower }}">{{ project }}</option>
+                        {% endfor %}
                     </select>
                     <label for="inspector">INSPECTOR</label>
                     <input type="text" id="inspector" name="inspector" required placeholder="Inspector Name" />
-                    <button type="submit" class="btn-submit btn-primary">SUBMIT</button>
-                </form>
+                </div>
             </div>
             <div class="standard-form-container" id="standby-form-container" data-state="standby_state">
                 <form class="standard-form" id="standby-form">
@@ -123,6 +124,11 @@
         </div>
 
         <div class="gui-footer">
+            <button class="btn-footer" id="btn-ok-project" data-state="project_state">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M416 128L192 384l-96-96"/>
+                </svg>
+            </button>
             <button class="btn-footer" id="btn-ok" data-state="standby_state" type="submit" form="standby-form">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M416 128L192 384l-96-96"/>
                 </svg>
@@ -193,7 +199,15 @@
                     <path d="M192 112V72h0a23.93 23.93 0 0124-24h80a23.93 23.93 0 0124 24h0v40M256 176v224M184 176l8 224M328 176l-8 224" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
-            <button class="btn-footer" id="btn-new" data-state="end_state">
+            <button class="btn-footer" id="btn-new-project" data-state="end_state">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M416 221.25V416a48 48 0 01-48 48H144a48 48 0 01-48-48V96a48 48 0 0148-48h98.75a32 32 0 0122.62 9.37l141.26 141.26a32 32 0 019.37 22.62z"
+                          fill="none" stroke-linejoin="round" stroke-width="32"/>
+                    <path d="M256 56v120a32 32 0 0032 32h120" 
+                          fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                </svg>
+            </button>
+            <button class="btn-footer" id="btn-new-part" data-state="end_state">
                 <?xml version="1.0" encoding="utf-8"?>
                     <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="#000000">
                         <path fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" d="M9.5 1.1l3.4 3.5.1.4v2h-1V6H8V2H3v11h4v1H2.5l-.5-.5v-12l.5-.5h6.7l.3.1zM9 2v3h2.9L9 2zm4 14h-1v-3H9v-1h3V9h1v3h3v1h-3v3z"/>

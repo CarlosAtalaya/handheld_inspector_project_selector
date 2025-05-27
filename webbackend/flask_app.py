@@ -44,6 +44,11 @@ class FlaskAppWrapper:
         self.handheld_ops_manager = HandheldOpsManager(self.config)
         self.selected_defect = ''
 
+        # Available projects
+        self.available_projects = (
+            self.handheld_ops_manager.get_available_projects()
+        )
+
         # Define endpoints for various states and operations
         self.add_endpoint('/', 'index', self.index)
         self.add_endpoint('/get_image', 'get_image', self.get_image)
@@ -169,6 +174,7 @@ class FlaskAppWrapper:
     def project_state(self):
         '''
         Handles the "project_state".
+        Initializes the ops manager for the selected project.
         '''
         data = request.get_json().get('data')
         project = data['project']
@@ -180,12 +186,20 @@ class FlaskAppWrapper:
 
         response = {
             'nextState': next_state,
+            'actions': {
+                'report': {
+                    'add_page': True,
+                    'remove_page': False,
+                    'update_page': True,
+                    'page_number': n_inspection
+                }
+            },
             'data': {
                 'screen': '/video_feed',
                 'report': {
                     'text': {
                         'project': project,
-                        'inspector': inspector,
+                        'technician': inspector,
                         'page-number': n_inspection
                     }
                 },
@@ -491,7 +505,7 @@ class FlaskAppWrapper:
             'nextState': next_state,
             'actions': {
                 'report': {
-                    'add_page': action in ['more', 'new'],
+                    'add_page': action in ['more', 'new-part', 'new-project'],
                     'remove_page': False,
                     'update_page': action == 'more',
                     'page_number': n_inspection
@@ -517,6 +531,7 @@ class FlaskAppWrapper:
         '''
         return render_template(
             'index.html',
+            projects=self.available_projects,
             defects=self.handheld_ops_manager.qc.get_defects(),
             quality=self.handheld_ops_manager.qc.get_quality(),
             finish=self.handheld_ops_manager.qc.get_finish()
@@ -526,7 +541,7 @@ class FlaskAppWrapper:
         '''
         Starts the Flask server on host '0.0.0.0' and port 5001.
         The app runs in threaded mode to handle multiple requests
-        simultaneously.
+        simultaneously."
         '''
         self.app.run(
             host=self.config['flask']['host'],
