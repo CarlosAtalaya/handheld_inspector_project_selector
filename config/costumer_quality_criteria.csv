@@ -1,0 +1,97 @@
+Defect,Surface Quality,Finish,Criteria
+FLASH LINES,A,Painted,"Surface step must be ≤ 0.25 mm deep, for complete length of tool split"
+FLASH LINES,A,Visual,"Surface step must be ≤ 0.25 mm deep, for complete length of tool split"
+FLASH LINES,B,Painted,"Surface step must be ≤ 0.5 mm deep, for complete length of tool split"
+FLASH LINES,B,Visual,"Surface step must be ≤ 0.5 mm deep, for complete length of tool split"
+FLASH LINES,C,Painted,"Acceptable – Unless flash line(s) impact an inter-part relationship or secondary operation, e.g., bonding"
+FLASH LINES,C,Visual,"Acceptable – Unless flash line(s) impact an inter-part relationship or secondary operation, e.g., bonding"
+DENTS OR SURFACE PROFILE DISTORTIONS,A,Painted,Not acceptable
+DENTS OR SURFACE PROFILE DISTORTIONS,A,Visual,Not acceptable
+DENTS OR SURFACE PROFILE DISTORTIONS,B,Painted,Must be ≤ 0.25mm in depth ≤ 25mm² area
+DENTS OR SURFACE PROFILE DISTORTIONS,B,Visual,Must be ≤ 0.25mm in depth ≤ 25mm² area
+DENTS OR SURFACE PROFILE DISTORTIONS,C,Painted,Acceptable
+DENTS OR SURFACE PROFILE DISTORTIONS,C,Visual,Acceptable
+POROSITY,A,Painted,Defects must be ≤ 1 mm diameter in size and ≤ 10 per 500 mm2 zone.
+POROSITY,A,Visual,Defects must be < 1 mm diameter in size and ≤ 5 per 100 mm2 zone.
+POROSITY,B,Painted,Defects must be ≤ 1 mm diameter in size and ≤ 15 per 750 mm2 zone.
+POROSITY,B,Visual,Defects must be < 1 mm diameter in size and ≤ 10 per 200 mm2 zone.
+POROSITY,C,Painted,Acceptable
+POROSITY,C,Visual,Acceptable
+RESIN RICHNESS POOR CONSOLIDATION,A,Painted,Acceptable if total area ≤ 100 mm
+RESIN RICHNESS POOR CONSOLIDATION,A,Visual,Not Acceptable
+RESIN RICHNESS POOR CONSOLIDATION,B,Painted,Acceptable if total area ≤ 250 mm
+RESIN RICHNESS POOR CONSOLIDATION,B,Visual,Acceptable if total area ≤ 100 mm
+RESIN RICHNESS POOR CONSOLIDATION,C,Painted,Acceptable
+RESIN RICHNESS POOR CONSOLIDATION,C,Visual,Acceptable
+DELAMINATION / CRACKS (DAMAGE),A,Painted,Not Acceptable
+DELAMINATION / CRACKS (DAMAGE),A,Visual,Not Acceptable
+DELAMINATION / CRACKS (DAMAGE),B,Painted,Not Acceptable
+DELAMINATION / CRACKS (DAMAGE),B,Visual,Not Acceptable
+DELAMINATION / CRACKS (DAMAGE),C,Painted,Not Acceptable
+DELAMINATION / CRACKS (DAMAGE),C,Visual,Not Acceptable
+CHIP (DAMAGE),A,Painted,Not acceptable
+CHIP (DAMAGE),A,Visual,Not acceptable
+CHIP (DAMAGE),B,Painted,Defects must be ≤ 1 mm²
+CHIP (DAMAGE),B,Visual,Not acceptable
+CHIP (DAMAGE),C,Painted,Defects must be ≤ 5 mm²
+CHIP (DAMAGE),C,Visual,Defects must be ≤ 5 mm²
+SCRATCHES,A,Painted,Acceptable - Provided scratch has not fully penetrated through the resin layer into the carbon fibre weave.
+SCRATCHES,A,Visual,Not acceptable
+SCRATCHES,B,Painted,Acceptable - Provided scratch has not fully penetrated through the resin layer into the carbon fibre weave.
+SCRATCHES,B,Visual,Not acceptable
+SCRATCHES,C,Painted,Acceptable
+SCRATCHES,C,Visual,Acceptable
+CONTAMINATION & INCLUSIONS,A,Painted,Defect must be ≤ 15 mm²
+CONTAMINATION & INCLUSIONS,A,Visual,Defect must be ≤ 0.5 mm² / 2x per panel
+CONTAMINATION & INCLUSIONS,B,Painted,Defect must be ≤ 25 mm²
+CONTAMINATION & INCLUSIONS,B,Visual,Defect must be ≤ 0.5 mm² ≤ 2 defects per 100mm² / 5x per panel
+CONTAMINATION & INCLUSIONS,C,Painted,Acceptable
+CONTAMINATION & INCLUSIONS,C,Visual,Acceptable
+OVERABRADED SURFACE / VISIBLE BULK PLY,A,Painted,Not acceptable
+OVERABRADED SURFACE / VISIBLE BULK PLY,A,Visual,Not Acceptable
+OVERABRADED SURFACE / VISIBLE BULK PLY,B,Painted,Acceptable - Providing surface profile geometry is within specified tolerance
+OVERABRADED SURFACE / VISIBLE BULK PLY,B,Visual,Not Acceptable
+OVERABRADED SURFACE / VISIBLE BULK PLY,C,Painted,Acceptable - Providing surface profile geometry is within specified tolerance
+OVERABRADED SURFACE / VISIBLE BULK PLY,C,Visual,Acceptable - Providing surface profile geometry is within specified tolerance
+BRIDGING,A,Painted,Defect must be ≤ 150 mm² per defect / 2x per panel
+BRIDGING,A,Visual,Not Acceptable
+BRIDGING,B,Painted,Defect must be ≤ 200 mm² per defect / 5x per panel
+BRIDGING,B,Visual,Defect must be ≤ 25 mm² per defect / 2x per panel
+BRIDGING,C,Painted,Defect must be ≤ 250 mm² per defect / 7x per panel
+BRIDGING,C,Visual,Defect must be ≤ 100 mm² per defect / 4x per panel
+LOOSE FIBRES,A,Painted,Acceptable
+LOOSE FIBRES,A,Visual,Not Acceptable
+LOOSE FIBRES,B,Painted,Acceptable
+LOOSE FIBRES,B,Visual,1x Fibre / 100 mm² ≤ 6mm long x 0.2mm wide
+LOOSE FIBRES,C,Painted,Acceptable
+LOOSE FIBRES,C,Visual,Acceptable
+PREPREG FIBER TENSION,A,Painted,Acceptable
+PREPREG FIBER TENSION,A,Visual,Not Acceptable
+PREPREG FIBER TENSION,B,Painted,Acceptable
+PREPREG FIBER TENSION,B,Visual,Defects must be ≤ 10 mm x 5 mm / not immediately obvious to the naked eye / 2x per panel
+PREPREG FIBER TENSION,C,Painted,Acceptable
+PREPREG FIBER TENSION,C,Visual,Acceptable
+WRINKLES,A,Painted,Acceptable
+WRINKLES,A,Visual,Not Acceptable
+WRINKLES,B,Painted,Acceptable
+WRINKLES,B,Visual,Defects must be ≤ 10 mm x 5 mm / not immediately obvious to the naked eye / 2x per panel
+WRINKLES,C,Painted,Acceptable
+WRINKLES,C,Visual,Acceptable
+TWILL STRIPE ORIENTATION,A,Painted,Any weave direction acceptable
+TWILL STRIPE ORIENTATION,A,Visual,Weave pattern deviation must be maintained at ±5° from point of design specification origin where panel geometry allows
+TWILL STRIPE ORIENTATION,B,Painted,Any weave direction acceptable
+TWILL STRIPE ORIENTATION,B,Visual,Weave pattern deviation must be maintained at ±7.5° from point of design specification origin where panel geometry allows
+TWILL STRIPE ORIENTATION,C,Painted,Any weave direction acceptable
+TWILL STRIPE ORIENTATION,C,Visual,Any weave direction acceptable
+HERRINGBONE TOW TO TOW ALIGNMENT,A,Painted,Any weave alignment is acceptable
+HERRINGBONE TOW TO TOW ALIGNMENT,A,Visual,Weave pattern offset between tows at join must match within 0.5 mm
+HERRINGBONE TOW TO TOW ALIGNMENT,B,Painted,Any weave alignment is acceptable
+HERRINGBONE TOW TO TOW ALIGNMENT,B,Visual,Weave pattern offset between tows at join must match within 1.0 mm
+HERRINGBONE TOW TO TOW ALIGNMENT,C,Painted,Any weave alignment is acceptable
+HERRINGBONE TOW TO TOW ALIGNMENT,C,Visual,Any weave alignment is acceptable
+BUTT JOINTS,A,Painted,Any weave alignment is acceptable
+BUTT JOINTS,A,Visual,Ply layer joint gap 0 to ≤ 0.25 mm
+BUTT JOINTS,B,Painted,Any weave alignment is acceptable
+BUTT JOINTS,B,Visual,Ply layer joint gap must be ≤ 0.5 mm
+BUTT JOINTS,C,Painted,Any weave alignment is acceptable
+BUTT JOINTS,C,Visual,Any weave alignment is acceptable

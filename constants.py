@@ -1,0 +1,10 @@
+CT_LIGHT_SIDE_GUIDELINE = 'light'
+CT_DARK_SIDE_GUIDELINE = 'dark'
+CT_DEFECT_PINHOLE = 'pinhole'
+CT_LIGHT_SIDE_DEFECTS = [CT_DEFECT_PINHOLE]
+
+# Timestamp
+CT_TIMESTAMP_FORMAT = '%Y-%m-%d-%H-%M-%S'
+
+# Date format
+CT_DATE_FORMAT = '%Y-%m-%d'

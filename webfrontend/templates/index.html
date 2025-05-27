@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESEN EYE</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="manifest" href="../static/manifest.json">
+    <link rel="icon" href="../static/images/icons/favicon.ico">
+</head>
+<body>
+    <div class="gui-container">
+        <div class="gui-header">
+            <button class="btn-toggle-report">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+                    <path d="M416 221.25V416a48 48 0 01-48 48H144a48 48 0 01-48-48V96a48 48 0 0148-48h98.75a32 32 0 0122.62 9.37l141.26 141.26a32 32 0 019.37 22.62z"
+                    fill="none" stroke-linejoin="round" stroke-width="32"/>
+                    <path d="M256 56v120a32 32 0 0032 32h120" 
+                    fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                </svg>
+            </button>
+            <div class="gui-header-icon-container">
+                <img src="../static/images/eseneye_icon.png" alt="">
+            </div>
+            <div class="gui-header-landscape-icon-container">
+                <img src="../static/images/eseneye_symbol.png" alt="">
+            </div>
+        </div>
+
+        <div class="step-container">
+            <p class="instruction" data-state="project_state">FILL PROJECT AND INSPECTOR</p>
+            <p class="instruction" data-state="standby_state">FILL PART DATA</p>
+            <p class="instruction" data-state="label_state">CAPTURE PART LABEL</p>
+            <p class="instruction" data-state="selection_state">FILL CRITERIA DEFECT FORM</p>
+            <p class="instruction" data-state="criteria_state">CONFIRM CRITERIA DATA</p>
+            <p class="instruction" data-state="context_state">CAPTURE CONTEXT PICTURE</p>
+            <p class="instruction" data-state="detail_state">CAPTURE DEFECT</p>
+            <p class="instruction" data-state="confirmation_state">REPEAT / KEEP / DROP</p>
+            <p class="instruction" data-state="end_state">NEW / ADD / PRINT</p>
+        </div>
+
+        <div class="screen-container"> 
+            <div class="video-container">
+                <div class="image-wrapper">
+                    <img id="video-input" class="video-input" src="..." />
+                    <div class="blurred-div" id="blurred-left" data-state="detail_state" data-side="dark">
+                        <div class="arrow-container">
+                            <svg viewBox="0 0 512 512"><path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M268 112l144 144-144 144M392 256H100"/></svg>
+                        </div>
+                    </div>
+                    <div class="blurred-div" id="blurred-right" data-state="detail_state" data-side="light">
+                        <div class="arrow-container">
+                            <svg viewBox="0 0 512 512"><path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M244 400L100 256l144-144M120 256h292"/></svg>
+                        </div>
+                    </div>
+                    <div class="guideline" id="guideline-left" data-state="detail_state" data-side="light"></div>
+                    <div class="guideline" id="guideline-right" data-state="detail_state" data-side="dark"></div>
+                </div>
+            </div>
+            <div class="standard-form-container" id="project-inspector-form-container" data-state="project_state">
+                <form class="standard-form" id="project-inspector-form">
+                    <label for="project">PROJECT</label>
+                    <select id="project" name="project" required>
+                        <option value="" disabled selected>SELECT PROJECT</option>
+                        <option value="singer">SINGER</option>
+                    </select>
+                    <label for="inspector">INSPECTOR</label>
+                    <input type="text" id="inspector" name="inspector" required placeholder="Inspector Name" />
+                    <button type="submit" class="btn-submit btn-primary">SUBMIT</button>
+                </form>
+            </div>
+            <div class="standard-form-container" id="standby-form-container" data-state="standby_state">
+                <form class="standard-form" id="standby-form">
+                      <label for="partnumber">PART NUMBER</label>
+                      <input type="text" id="partnumber" name="partnumber" required placeholder="123456..." />
+                      <label for="serialnumber">SERIAL NUMBER</label>
+                      <input type="text" id="serialnumber" name="serialnumber" required placeholder="123456..."/>
+                </form>
+            </div>
+            <div class="standard-form-container" id="defect-selection-form-container" data-state="selection_state">
+                <form class="standard-form" id="defect-selection-form">
+                  <label for="defect-type">DEFECT TYPE</label>
+                  <select id="defect-type" name="defect-type" required>
+                    <option value="" disabled selected>DEFECT</option>
+                    {% for defect in defects %}
+                      <option value="{{ defect|lower }}">{{ defect }}</option>
+                    {% endfor %}
+                  </select>
+              
+                  <label for="surface-quality">SURFACE QUALITY</label>
+                  <select id="surface-quality" name="surface-quality" required>
+                    <option value="" disabled selected>(A/B/C)</option>
+                    {% for q in quality %}
+                      <option value="{{ q|lower }}">{{ q }}</option>
+                    {% endfor %}
+                  </select>
+              
+                  <label for="finish">FINISH QUALITY</label>
+                  <select id="finish" name="finish" required>
+                    <option value="" disabled selected>(VISUAL/PAINTED)</option>
+                    {% for f in finish %}
+                      <option value="{{ f|lower }}">{{ f }}</option>
+                    {% endfor %}
+                  </select>
+                </form>
+            </div>
+            <div class="standard-form-container" id="criteria-form-container" data-state="criteria_state">
+                <div class="standard-form" id="criteria-form">
+                    <div class="label">DEFECT TYPE</div>
+                    <div class="input-like" data-state-content="defect-type"></div>
+                    <div class="label">SURFACE QUALITY</div>
+                    <div class="input-like" data-state-content="surface-quality"></div>
+                    <div class="label">FINISH</div>
+                    <div class="input-like" data-state-content="finish"></div>
+                    <div class="label">ACCEPTANCE CRITERIA IS</div>
+                    <div class="input-like" data-state-content="criteria"></div>
+                    <p class="label" id="criteria-title" data-reset="text:default-criteria">
+                    IS THAT A DEFECT ACCORDING TO QUALITY CRITERIA?
+                    </p>
+                </div>
+            </div>
+              
+        </div>
+
+        <div class="gui-footer">
+            <button class="btn-footer" id="btn-ok" data-state="standby_state" type="submit" form="standby-form">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M416 128L192 384l-96-96"/>
+                </svg>
+                 <!-- If we wanted to remove svg... -->
+                 <!-- <p>OK</p> -->
+            </button>
+            <button class="btn-footer" id="btn-ok" data-state="selection_state" type="submit" form="defect-selection-form">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M416 128L192 384l-96-96"/>
+                </svg>
+            </button>
+            <button class="btn-footer" id="btn-yes" data-state="criteria_state" type="submit" form="criteria-form">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M416 128L192 384l-96-96"/>
+                </svg>
+            </button>
+            <button class="btn-footer" id="btn-no" data-state="criteria_state" type="submit" form="criteria-form">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M368 368L144 144M368 144L144 368"/>
+                </svg>
+            </button>
+            <button class="btn-footer" id="btn-capture-frame" data-state="label_state context_state detail_state">
+                <svg class="camera-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M350.54 148.68l-26.62-42.06C318.31 100.08 310.62 96 302 96h-92c-8.62 0-16.31 4.08-21.92 10.62l-26.62 42.06C155.85 155.23 148.62 160 140 160H80a32 32 0 00-32 32v192a32 32 0 0032 32h352a32 32 0 0032-32V192a32 32 0 00-32-32h-59c-8.65 0-16.85-4.77-22.46-11.32z"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                    <circle cx="256" cy="272" r="80" fill="none" stroke-miterlimit="10" stroke-width="32"/>
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M124 158v-22h-24v22"/>
+                </svg>
+                <svg class="loading-circle" viewBox="0 0 100 100">
+                    <defs>
+                      <!-- Gradient to create taper effect -->
+                      <linearGradient id="taper" gradientUnits="userSpaceOnUse"
+                                      x1="85" y1="15" x2="15" y2="85">
+                        <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+                        <stop offset="1" stop-color="#fff" stop-opacity="0.5"/>
+                      </linearGradient>
+                      
+                      <!-- Mask to apply the taper -->
+                      <mask id="taper-mask">
+                        <rect width="100" height="100" fill="url(#taper)"/>
+                      </mask>
+                    </defs>
+                  
+                    <!-- Thick circle with mask applied -->
+                    <circle cx="50" cy="50" r="45" fill="none" 
+                            stroke-width="6" stroke-linecap="round"
+                            stroke-dasharray="240" stroke-dashoffset="60"
+                            mask="url(#taper-mask)"/>
+                  </svg>
+            </button>
+            <button class="btn-footer" id="btn-repeat" data-state="confirmation_state">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" 
+                    d="M320 120l48 48-48 48"/>
+                    <path d="M352 168H144a80.24 80.24 0 00-80 80v16M192 392l-48-48 48-48" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                    <path d="M160 344h208a80.24 80.24 0 0080-80v-16" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                </svg>
+            </button>
+           <button class="btn-footer" id="btn-keep" data-state="confirmation_state">
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                   <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M416 128L192 384l-96-96"/>
+               </svg>
+            </button>
+            <button class="btn-footer" id="btn-drop" data-state="confirmation_state">
+                <svg viewBox="0 0 512 512">
+                    <path d="M112 112l20 320c.95 18.49 14.4 32 32 32h184c17.67 0 30.87-13.51 32-32l20-320" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path stroke-linecap="round" stroke-miterlimit="10" d="M80 112h352"/>
+                    <path d="M192 112V72h0a23.93 23.93 0 0124-24h80a23.93 23.93 0 0124 24h0v40M256 176v224M184 176l8 224M328 176l-8 224" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="btn-footer" id="btn-new" data-state="end_state">
+                <?xml version="1.0" encoding="utf-8"?>
+                    <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                        <path fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" d="M9.5 1.1l3.4 3.5.1.4v2h-1V6H8V2H3v11h4v1H2.5l-.5-.5v-12l.5-.5h6.7l.3.1zM9 2v3h2.9L9 2zm4 14h-1v-3H9v-1h3V9h1v3h3v1h-3v3z"/>
+                    </svg>
+            </button>
+            <button class="btn-footer" id="btn-more" data-state="end_state">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" 
+                    d="M256 112v288M400 256H112"/>
+                </svg>
+            </button>
+            <button class="btn-footer" id="btn-print" data-state="end_state">
+                <svg viewBox="0 0 512 512">
+                    <path d="M384 368h24a40.12 40.12 0 0040-40V168a40.12 40.12 0 00-40-40H104a40.12 40.12 0 00-40 40v160a40.12 40.12 0 0040 40h24" fill="none" stroke-linejoin="round"/><rect x="128" y="240" width="256" height="208" rx="24.32" ry="24.32" fill="none" stroke-linejoin="round"/>
+                    <path d="M384 128v-24a40.12 40.12 0 00-40-40H168a40.12 40.12 0 00-40 40v24" fill="none" stroke-linejoin="round"/><circle cx="392" cy="184" r="24" stroke-width="12"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="choose-defect-container" id="choose-defect-container" data-state="select_defect">
+            <div class="choose-defect-subcontainer">
+                <p class="header-defect">SELECT DEFECT</p>
+                <div class="defects-btns-container">
+                    <div class="column-btn-defects 1">
+                        <button class="btn-deffect" id="1">PINHOLE</button>
+                        <button class="btn-deffect" id="2">DIRT</button>
+                        <button class="btn-deffect" id="3">GAP</button>
+                    </div>
+                    <div class="column-btn-defects 2">
+                        <button class="btn-deffect" id="4">PATTERN</button>
+                        <button class="btn-deffect" id="5">CENTERLINE</button>
+                        <button class="btn-deffect" id="6">DRILL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="a4-container">
+        <div class="zoom-btn-container">
+            <button class="btn-zoom-in">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"
+                    d="M256 112v288M400 256H112"/>
+                </svg>
+            </button>
+            <button class="btn-zoom-out">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"
+                    d="M400 256H112"/>
+                </svg>
+            </button>
+        </div>
+        <div class="a4-document">
+        </div>
+    </div>
+    
+    <script type="module" src="../static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+# Camera device
+camerausb:
+  # capture_device: 'USB camera: USB camera'
+  capture_device: 'HD Webcam: HD Webcam'  # NOTE: temporal, debug
+
+# Resolution parameters
+resolution: [2592, 1944]
+streaming_resolution: [640, 480]
+
+stream:
+  max_fps: 60
+  capture_encode: '.jpg'
+
+# Flask App configuration
+flask:
+  host: '0.0.0.0'
+  port: 5001
+  threaded: True
+  debug: False
+
+# Tilling and Nndetector parameters
+tiling:
+   tile_num_x: 2
+   tile_size_x: 1024
+   tile_border_x: 50
+   tile_num_y: 2
+   tile_size_y: 1024
+   tile_border_y: 250
+
+nndetector:
+  model_path: '../ais_models/trained_model_DIFFUSOR_JEC25_25_02_2025/saved_model'
+  model_categories: 
+   - category_id: 1
+     category_name: 'pinhole'
+     category_threshold: 0.3
+     category_assessment_lower_threshold : 0.0
+   - category_id: 2
+     category_name: 'dirt'
+     category_threshold: 0.3
+     category_assessment_lower_threshold : 0.0
+  input_shape: [1024, 1024]
+
+unetdetector:
+  model_path: '../ais_models/trained_unet_gap_detector/unet_joint_best_20250226_164156.pth'
+  device: 'cpu'
+  input_shape: [256, 256]
+  in_channels: 1
+  out_channels: 1
+
+inspectionSurface:
+  IoU_th: 0.2
+
+# DrillInspection parameters
+drillinspection:
+  buffer_size: 100
+
+# Scale factor parameter
+defectsmeasurements:
+  correlation_pixel_mm: 0.017
+
+# patterninspection parameters
+patterninspection:
+  image_resize: 128
+  sliding_window:
+    window_size: 32
+    stride: 3
+    smoothing_size: 51
+  blurring:
+    ksize: 5
+    sigma: 5
+  peak_fn: 'max_prominence'
+
+ROI:  # [rowstart, rowend, colstart, colend]
+  dirt: [0, 1, 0.5, 1]
+  pinhole: [0, 1, 0, 0.5]
+  pattern_angle: [0, 1, 0.5, 1]
+  centerline: [0, 1, 0.5, 1]
+  gap: [0.3, 0.7, 0.725, 0.775]
+  drill: [0.4, 0.6, 0.65, 0.85]
+
+# Quality criteria
+csv:
+  path: 'handheld/config/costumer_quality_criteria.csv'
+  defect_keyword: 'Defect'
+  quality_keyword: 'Surface Quality'
+  finish_keyword: 'Finish'
+  criteria_keyword: 'Criteria'
+
+# IO
+io:
+  local_save_path: '../reports/'
+
+# Frontend
+frontend:
+  static: 'handheld/webfrontend/static'
+  templates: 'handheld/webfrontend/templates'
