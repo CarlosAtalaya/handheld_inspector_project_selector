@@ -1,4 +1,4 @@
-// ui-manager.js
+// uimanager.js
 export class UIManager {
     constructor() {
         this.stateElements = document.querySelectorAll('[data-state]');
@@ -8,49 +8,42 @@ export class UIManager {
         // Add toggle UI/Report view event listener
         const guiContainer = document.querySelector('.gui-container');
         const a4Container = document.querySelector('.a4-container');
-        const infoContainer = document.querySelector('.info-container');
         const btnToggleReport = document.querySelector('.btn-toggle-report');
         const btnZoomContainer = document.querySelector('.zoom-btn-container');
-        const btnInfo = document.getElementById('btn-info');
-        const btnCloseInfo = document.getElementById('btn-close-info');
 
         btnToggleReport.addEventListener('click', () => {
             guiContainer.classList.toggle('contracted');
             a4Container.classList.toggle('expanded');
             btnZoomContainer.classList.toggle('unhide');
-            infoContainer.classList.toggle('hide');
         });
-
-
-        btnInfo.addEventListener('click', () => { infoContainer.classList.toggle('active'); });
-        btnCloseInfo.addEventListener('click', () => { infoContainer.classList.toggle('active'); });
     }
 
     initialize() {
         this.updateUIForState({
-            currentState: 'standby_state',
+            currentState: 'project_state',
             data: null
         });
     }
 
     resetFormsForState(currentState) {
         const form = document.querySelector(`[data-state="${currentState}"] form`);
-        form.reset();
-        console.log(`Form reset form state: ${currentState}`, form);
+        if (form) {
+            form.reset();
 
-        // Restore elements using data-reset
-        form.querySelectorAll('[data-reset]').forEach(el => {
-            const resetType = el.dataset.reset;
+            // Restore elements using data-reset
+            form.querySelectorAll('[data-reset]').forEach(el => {
+                const resetType = el.dataset.reset;
 
-            if (resetType === 'show') {
-                // Remove hidden
-                el.classList.remove('hidden');
-            } else if (resetType.startsWith('text:')) {
-                // Set default text
-                const defaultText = resetType.split(':')[1];
-                el.textContent = this.getDefaultText(defaultText);
-            }
-        });
+                if (resetType === 'show') {
+                    // Remove hidden
+                    el.classList.remove('hidden');
+                } else if (resetType.startsWith('text:')) {
+                    // Set default text
+                    const defaultText = resetType.split(':')[1];
+                    el.textContent = this.getDefaultText(defaultText);
+                }
+            });
+        }
     }
 
     getDefaultText(key) {
@@ -64,6 +57,10 @@ export class UIManager {
         this._toggleStateElements(state.currentState);
         this._toggleSideElements(state.currentState, state.data?.guideline_side);
         this._updateContent(state);
+
+        if (state.data?.project_data) {
+            this._updateProjectData(state.data.project_data);
+        }
     }
 
     _toggleStateElements(state) {
@@ -91,5 +88,53 @@ export class UIManager {
             const contentKey = element.dataset.stateContent;
             element.textContent = state.data?.['ui-content']?.[contentKey] || '';
         });
+    }
+
+    _updateProjectData(projectData) {
+        
+        const defectSelect = document.getElementById('defect-type');
+        
+        if (defectSelect && projectData.defects) {
+            this._clearSelectOptions(defectSelect);
+            defectSelect.innerHTML = '<option value="" disabled selected>DEFECT</option>';
+            projectData.defects.forEach(defect => {
+                const option = document.createElement('option');
+                option.value = defect.toLowerCase();
+                option.textContent = defect;
+                defectSelect.appendChild(option);
+            });
+        }
+
+        const qualitySelect = document.getElementById('surface-quality');
+        
+        if (qualitySelect && projectData.quality) {
+            this._clearSelectOptions(qualitySelect);
+            qualitySelect.innerHTML = '<option value="" disabled selected>(A/B/C)</option>';
+            projectData.quality.forEach(quality => {
+                const option = document.createElement('option');
+                option.value = quality.toLowerCase();
+                option.textContent = quality;
+                qualitySelect.appendChild(option);
+            });
+        }
+
+        const finishSelect = document.getElementById('finish');
+        
+        if (finishSelect && projectData.finish) {
+            this._clearSelectOptions(finishSelect);
+            finishSelect.innerHTML = '<option value="" disabled selected>(VISUAL/PAINTED)</option>';
+            projectData.finish.forEach(finish => {
+                const option = document.createElement('option');
+                option.value = finish.toLowerCase();
+                option.textContent = finish;
+                finishSelect.appendChild(option);
+            });
+        }
+    }
+
+    _clearSelectOptions(selectElement) {
+        while (selectElement.children.length > 1) {
+            selectElement.removeChild(selectElement.lastChild);
+        }
     }
 }

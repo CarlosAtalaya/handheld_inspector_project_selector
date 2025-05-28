@@ -28,83 +28,15 @@
         </div>
 
         <div class="step-container">
-            <div class="instruction-container">
-                <p class="instruction" data-state="standby_state">FILL PART DATA</p>
-                <p class="instruction" data-state="label_state">CAPTURE PART LABEL</p>
-                <p class="instruction" data-state="selection_state">FILL CRITERIA DEFECT FORM</p>
-                <p class="instruction" data-state="criteria_state">CONFIRM CRITERIA DATA</p>
-                <p class="instruction" data-state="context_state">CAPTURE CONTEXT PICTURE</p>
-                <p class="instruction" data-state="detail_state">CAPTURE DEFECT</p>
-                <p class="instruction" data-state="confirmation_state">REPEAT / KEEP / DROP</p>
-                <p class="instruction" data-state="end_state">NEW / ADD / PRINT</p>
-                <button class="info-icon" id="btn-info">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path d="M248 64C146.39 64 64 146.39 64 248s82.39 184 184 184 184-82.39 184-184S349.61 64 248 64z" fill="none" stroke-miterlimit="10" stroke-width="32"/>
-                        <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M220 220h32v116"/>
-                        <path fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M208 340h88"/>
-                        <path d="M248 130a26 26 0 1026 26 26 26 0 00-26-26z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <div class="info-container" id="info-container">
-            <div class="close-info-container">
-                <button class="btn-close-info" id="btn-close-info">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M368 368L144 144M368 144L144 368"/>
-                    </svg>
-                </button>
-            </div>
-            <h2 class="instruction-h2" data-state="standby_state">FILL PART DATA</h2>
-            <p class="info-p" data-state="standby_state">
-            Enter from the <strong>label</strong>:<br>
-                • Part number<br>
-                • Serial number
-            </p>
-            <h2 class="instruction-h2" data-state="label_state">CAPTURE PART LABEL</h2>
-            <p class="info-p" data-state="label_state">
-            Capture image of part's <strong>label</strong>.
-            </p>
-            <h2 class="instruction-h2" data-state="selection_state">FILL CRITERIA DEFECT FORM</h2>
-            <p class="info-p" data-state="selection_state">
-                Select defect criteria:<br>
-                • <strong>Defect type</strong>: (e.g. scratch, dent)<br>
-                • <strong>Surface quality</strong>: (A/B/C)<br>
-                • <strong>Finish quality</strong>.
-            </p>
-            <h2 class="instruction-h2" data-state="criteria_state">CONFIRM CRITERIA DATA</h2>
-            <p class="info-p" data-state="criteria_state">
-                Verify against acceptance criteria:<br>
-                • Check if selections match defect conditions.<br>
-                • <strong>YES</strong> = Log as defect.<br>
-                • <strong>NO</strong> = False alarm.
-            </p>
-            <h2 class="instruction-h2" data-state="context_state">CAPTURE CONTEXT PICTURE</h2>
-            <p class="info-p" data-state="context_state">
-                Step back and capture:<br>
-                • <strong>Defect</strong> and <strong>surrounding</strong> area.<br>
-                • Ensure clear visibility of defects' <strong>location</strong>.
-            </p>
-            <h2 class="instruction-h2" data-state="detail_state">CAPTURE DEFECT</h2>
-            <p class="info-p" data-state="detail_state">
-                Take close-up picture of defect.<br>
-                • Center flaw in the <strong>focused</strong> half.
-            </p>
-            <h2 class="instruction-h2" data-state="confirmation_state">REPEAT / KEEP / DROP</h2>
-            <p class="info-p" data-state="confirmation_state">
-                Take a close look at the defect picture.<br>
-                • <strong>Repeat</strong>: if blurry/out-of-focus.<br>
-                • <strong>Keep</strong>: if sharp and clear.<br>
-                • <strong>Drop</strong>: to discard inspection.
-            </p>
-            <h2 class="instruction-h2" data-state="end_state">NEW / ADD / PRINT</h2>
-            <p class="info-p" data-state="end_state">
-                Final actions:<br>
-                • <strong>New</strong>: Start new report on another part.<br> 
-                • <strong>Add</strong>: Log another defect of the same part.<br>
-                • <strong>Print</strong>: Save current report.
-            </p>
+            <p class="instruction" data-state="project_state">FILL PROJECT AND INSPECTOR</p>
+            <p class="instruction" data-state="standby_state">FILL PART DATA</p>
+            <p class="instruction" data-state="label_state">CAPTURE PART LABEL</p>
+            <p class="instruction" data-state="selection_state">FILL CRITERIA DEFECT FORM</p>
+            <p class="instruction" data-state="criteria_state">CONFIRM CRITERIA DATA</p>
+            <p class="instruction" data-state="context_state">CAPTURE CONTEXT PICTURE</p>
+            <p class="instruction" data-state="detail_state">CAPTURE DEFECT</p>
+            <p class="instruction" data-state="confirmation_state">REPEAT / KEEP / DROP</p>
+            <p class="instruction" data-state="end_state">NEW PROJECT / NEW PART / ADD / PRINT</p>
         </div>
 
         <div class="screen-container"> 
@@ -123,6 +55,19 @@
                     </div>
                     <div class="guideline" id="guideline-left" data-state="detail_state" data-side="light"></div>
                     <div class="guideline" id="guideline-right" data-state="detail_state" data-side="dark"></div>
+                </div>
+            </div>
+            <div class="standard-form-container" id="project-inspector-form-container" data-state="project_state">
+                <div class="standard-form" id="project-inspector-form">
+                    <label for="project">PROJECT</label>
+                    <select id="project" name="project" required>
+                        <option value="" disabled selected>SELECT PROJECT</option>
+                        {% for project in projects %}
+                            <option value="{{ project|lower }}">{{ project }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="inspector">INSPECTOR</label>
+                    <input type="text" id="inspector" name="inspector" required placeholder="Inspector Name" />
                 </div>
             </div>
             <div class="standard-form-container" id="standby-form-container" data-state="standby_state">
@@ -179,6 +124,11 @@
         </div>
 
         <div class="gui-footer">
+            <button class="btn-footer" id="btn-ok-project" data-state="project_state">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M416 128L192 384l-96-96"/>
+                </svg>
+            </button>
             <button class="btn-footer" id="btn-ok" data-state="standby_state" type="submit" form="standby-form">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M416 128L192 384l-96-96"/>
                 </svg>
@@ -249,11 +199,56 @@
                     <path d="M192 112V72h0a23.93 23.93 0 0124-24h80a23.93 23.93 0 0124 24h0v40M256 176v224M184 176l8 224M328 176l-8 224" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
-            <button class="btn-footer" id="btn-new" data-state="end_state">
-                <?xml version="1.0" encoding="utf-8"?>
-                    <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="#000000">
-                        <path fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" d="M9.5 1.1l3.4 3.5.1.4v2h-1V6H8V2H3v11h4v1H2.5l-.5-.5v-12l.5-.5h6.7l.3.1zM9 2v3h2.9L9 2zm4 14h-1v-3H9v-1h3V9h1v3h3v1h-3v3z"/>
-                    </svg>
+            <!-- Botón NEW PROJECT - Carpeta con icono refresh pequeño arriba -->
+            <button class="btn-footer" id="btn-new-project" data-state="end_state">
+                <svg viewBox="0 0 24 30" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Carpeta (elemento principal, reducida y desplazada hacia abajo) -->
+                    <g transform="translate(0, 7) scale(1.05)">
+                        <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" 
+                            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 11h20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </g>
+                    
+                    <!-- Icono refresh pequeño arriba (escalado 0.35 y desplazado hacia arriba) -->
+                    <g transform="translate(8, 0) scale(0.35)">
+                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" 
+                            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 3v5h-5" 
+                            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" 
+                            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 21v-5h5" 
+                            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                </svg>
+            </button>
+
+            <!-- Botón NEW PART - Coche con icono refresh pequeño arriba -->
+            <button class="btn-footer" id="btn-new-part" data-state="end_state">
+                <svg viewBox="0 0 24 30" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Carrocería del coche (elemento principal, reducido y desplazado hacia abajo) -->
+                    <g transform="translate(0, 6) scale(1.1)">
+                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z" 
+                            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Ruedas -->
+                        <circle cx="7.5" cy="16.5" r="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="16.5" cy="16.5" r="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <!-- Ventanas -->
+                        <path d="M6.5 5V8h11V5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </g>
+                    
+                    <!-- Icono refresh pequeño arriba (escalado 0.3 y ligeramente desplazado hacia arriba) -->
+                    <g transform="translate(8, 0) scale(0.35)">
+                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" 
+                            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 3v5h-5" 
+                            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" 
+                            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 21v-5h5" 
+                            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                </svg>
             </button>
             <button class="btn-footer" id="btn-more" data-state="end_state">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

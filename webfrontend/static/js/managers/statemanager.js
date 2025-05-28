@@ -2,7 +2,7 @@
 class StateManager {
     constructor() {
         this.state = {
-            currentState: 'standby_state',
+            currentState: 'project_state',
             data: null
         };
         this.subscribers = [];
@@ -10,6 +10,7 @@ class StateManager {
 
     async transitionState(payload) {
         try {
+            
             const response = await fetch(`/states/${this.state.currentState}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
@@ -17,6 +18,7 @@ class StateManager {
             });
 
             const result = await response.json();
+            
             this.state = {
                 currentState: result.nextState,
                 actions: result.actions,

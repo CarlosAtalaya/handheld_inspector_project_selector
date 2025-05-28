@@ -44,10 +44,20 @@ class FlaskAppWrapper:
         self.handheld_ops_manager = HandheldOpsManager(self.config)
         self.selected_defect = ''
 
+        # Available projects
+        self.available_projects = (
+            self.handheld_ops_manager.get_available_projects()
+        )
+
         # Define endpoints for various states and operations
         self.add_endpoint('/', 'index', self.index)
         self.add_endpoint('/get_image', 'get_image', self.get_image)
         self.add_endpoint('/video_feed', 'video_feed', self.video_feed)
+        self.add_endpoint(
+            '/states/project_state',
+            'project_state',
+            self.project_state, methods=['POST']
+        )
         self.add_endpoint(
             '/states/standby_state',
             'standby_state',
@@ -124,7 +134,7 @@ class FlaskAppWrapper:
 
         response = None
         if image_bytes is None:
-            response = jsonify({"error": "No frames captured yet"}), 404
+            response = jsonify({'error': 'No frames captured yet'}), 404
         else:
             response = Response(image_bytes, mimetype=CT_CAPTURE_MIMETYPE)
             response.headers['Cache-Control'] = (
@@ -141,7 +151,7 @@ class FlaskAppWrapper:
 
         response = None
         if image_bytes is None:
-            response = jsonify({"error": "No frames captured yet"}), 404
+            response = jsonify({'error': 'No frames captured yet'}), 404
         else:
             response = Response(image_bytes, mimetype=CT_CAPTURE_MIMETYPE)
             response.headers['Cache-Control'] = (
@@ -161,6 +171,53 @@ class FlaskAppWrapper:
         '''
         return f'{url}?t={time.time()}'
 
+    def project_state(self):
+        '''
+        Handles the 'project_state'.
+        Initializes the ops manager for the selected project.
+        '''
+        data = request.get_json().get('data')
+        project = data['project'].upper()
+        inspector = data['inspector']
+
+        next_state, n_inspection = self.handheld_ops_manager.project_state(
+            project, inspector
+        )
+
+        # Get project specific quality criteria data
+        defects = self.handheld_ops_manager.qc.get_defects()
+        quality = self.handheld_ops_manager.qc.get_quality()
+        finish = self.handheld_ops_manager.qc.get_finish()
+
+        response = {
+            'nextState': next_state,
+            'actions': {
+                'report': {
+                    'add_page': True,
+                    'remove_page': False,
+                    'update_page': True,
+                    'page_number': n_inspection
+                }
+            },
+            'data': {
+                'screen': '/video_feed',
+                'report': {
+                    'text': {
+                        'project': project,
+                        'technician': inspector,
+                        'page-number': n_inspection
+                    }
+                },
+                'project_data': {
+                    'defects': defects,
+                    'quality': quality,
+                    'finish': finish
+                },
+                'n_inspection': n_inspection
+            }
+        }
+        return jsonify(response)
+
     def standby_state(self):
         '''
         Endpoint to handle the standby state.
@@ -170,14 +227,23 @@ class FlaskAppWrapper:
         '''
         data = request.get_json().get('data')
 
-        next_state, n_inspection, current_date = (
+        (
+            next_state,
+            n_inspection,
+            current_date,
+            project,
+            inspector
+        ) = (
             self.handheld_ops_manager.standby_state(
                 data['inspected-part'],
                 data['serial-number']
             )
         )
+        # Prepare data for the report
         data['date'] = current_date
         data['page-number'] = n_inspection
+        data['project'] = project
+        data['technician'] = inspector
 
         response = {
             'nextState': next_state,
@@ -199,7 +265,7 @@ class FlaskAppWrapper:
 
     def label_state(self):
         '''
-        Handles the "label" state, where the system waits
+        Handles the 'label' state, where the system waits
         to capture the part's label photo.
         Returns:
         - JSON: Response including next state and additional data.
@@ -323,7 +389,7 @@ class FlaskAppWrapper:
 
     def context_state(self):
         '''
-        Handles the "context" state, where the system waits
+        Handles the 'context' state, where the system waits
         to capture the context photo.
         Returns:
         - JSON: Response including next state and additional data.
@@ -360,7 +426,7 @@ class FlaskAppWrapper:
 
     def detail_state(self):
         '''
-        Handles the "detail" state, where the system waits
+        Handles the 'detail' state, where the system waits
         to capture the detail photo.
         Returns:
         - JSON: Response including next state and additional data.
@@ -396,7 +462,7 @@ class FlaskAppWrapper:
 
     def confirmation_state(self):
         '''
-        Handles the "confirmation" state, that is, keep, repeat or drop
+        Handles the 'confirmation' state, that is, keep, repeat or drop
         inspection.
         Returns:
         - JSON: Response including next state and additional data.
@@ -458,7 +524,7 @@ class FlaskAppWrapper:
             'nextState': next_state,
             'actions': {
                 'report': {
-                    'add_page': action in ['more', 'new'],
+                    'add_page': action in ['more', 'new-part', 'new-project'],
                     'remove_page': False,
                     'update_page': action == 'more',
                     'page_number': n_inspection
@@ -484,16 +550,14 @@ class FlaskAppWrapper:
         '''
         return render_template(
             'index.html',
-            defects=self.handheld_ops_manager.qc.get_defects(),
-            quality=self.handheld_ops_manager.qc.get_quality(),
-            finish=self.handheld_ops_manager.qc.get_finish()
+            projects=self.available_projects
         )
 
     def run(self):
         '''
         Starts the Flask server on host '0.0.0.0' and port 5001.
         The app runs in threaded mode to handle multiple requests
-        simultaneously.
+        simultaneously.'
         '''
         self.app.run(
             host=self.config['flask']['host'],
