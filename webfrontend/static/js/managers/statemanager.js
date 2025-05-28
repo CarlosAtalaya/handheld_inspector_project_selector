@@ -2,7 +2,7 @@
 class StateManager {
     constructor() {
         this.state = {
-            currentState: 'project_state',
+            currentState: 'standby_state',
             data: null
         };
         this.subscribers = [];

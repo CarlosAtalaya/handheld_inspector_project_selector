@@ -8,19 +8,27 @@ export class UIManager {
         // Add toggle UI/Report view event listener
         const guiContainer = document.querySelector('.gui-container');
         const a4Container = document.querySelector('.a4-container');
+        const infoContainer = document.querySelector('.info-container');
         const btnToggleReport = document.querySelector('.btn-toggle-report');
         const btnZoomContainer = document.querySelector('.zoom-btn-container');
+        const btnInfo = document.getElementById('btn-info');
+        const btnCloseInfo = document.getElementById('btn-close-info');
 
         btnToggleReport.addEventListener('click', () => {
             guiContainer.classList.toggle('contracted');
             a4Container.classList.toggle('expanded');
             btnZoomContainer.classList.toggle('unhide');
+            infoContainer.classList.toggle('hide');
         });
+
+
+        btnInfo.addEventListener('click', () => { infoContainer.classList.toggle('active'); });
+        btnCloseInfo.addEventListener('click', () => { infoContainer.classList.toggle('active'); });
     }
 
     initialize() {
         this.updateUIForState({
-            currentState: 'project_state',
+            currentState: 'standby_state',
             data: null
         });
     }

@@ -38,42 +38,8 @@ class HandheldOpsManager:
         self.n_inspection = 1
         self.current_date = ''
 
-        self._available_projects = self.qc.discover_available_projects()
-
         self._cached_data = {}
         self._cached_images = {}
-
-    def get_available_projects(self):
-        '''
-        Returns the list of available projects.
-        Returns:
-        - list: Available project names
-        '''
-        return self._available_projects
-
-    def project_state(self, project, inspector):
-        '''
-        Process project and inspector data before starting inspection.
-        Args:
-        - project (str): Project name
-        - inspector (str): Inspector name
-        Returns:
-        - next_state (str): Next state to transition to.
-        - n_inspection (int): Current inspection number.
-        '''
-        next_state = 'standby_state'
-
-        # Set the project in QualityCriteria to load corresponding CSV
-        self.qc.set_project(project)
-
-        # Reset inspection data for new project
-        self.n_inspection = 1
-
-        # Store project and inspector data
-        self._cached_data['project'] = project.upper()
-        self._cached_data['technician'] = inspector
-
-        return next_state, self.n_inspection
 
     def standby_state(self, part_number, serial_number):
         '''
@@ -201,9 +167,9 @@ class HandheldOpsManager:
         Confirmation state.
         Args:
         - front_action (str):
-            - 'keep': keep inspection.
-            - 'repeat': repeat inspection, new page with cached data.
-            - 'drop': drop inspection, remove last report page.
+            - "keep": keep inspection.
+            - "repeat": repeat inspection, new page with cached data.
+            - "drop": drop inspection, remove last report page.
         Returns:
         - next_state (str): Next state to transition to.
         - action (str): 'keep', 'repeat' or 'drop'.
@@ -233,16 +199,15 @@ class HandheldOpsManager:
         Process end state logic.
         Args:
         - front_action (str):
-            - 'more': start new inspection on the same part and report.
-            - 'new-part': start new part (same project).
-            - 'new-project': start completely new project.
-            - 'print': print current report.
+            - "more": start new inspection on the same part and report.
+            - "new": start new report.
+            - "print": print current report.
         - raw_defect_type (str): Selected defect type for file naming
 
         Returns:
         - next_state (str): Next state to transition to.
         - self.n_inspection (int): Current inspection number.
-        - action (str): 'new-part', 'new-project', 'more' or 'print'.
+        - action (str): 'new', 'more' or 'print'.
         - cached_data (dict): invariant data to inspection.
         - cached_images (dict): invariant images to inspection.
         '''
@@ -267,7 +232,6 @@ class HandheldOpsManager:
         self.lo.imwrite(self.last_frame, image_local_path)
 
         if front_action == 'more':
-            # More inspections on same part
             cached_data = self._cached_data
             cached_images = self._cached_images
             self.n_inspection += 1
@@ -276,20 +240,10 @@ class HandheldOpsManager:
             next_state = 'end_state'
             action = 'print'
 
-        elif front_action == 'new-part':
-            # New part, same project - keep project and inspector data
+        elif front_action == 'new':
             next_state = 'standby_state'
-            action = 'new-part'
+            action = 'new'
             self.n_inspection = 1
-
-        elif front_action == 'new-project':
-            # Completely new project - clear everything
-            next_state = 'project_state'
-            action = 'new-project'
-            self.n_inspection = 1
-            # Clear all cached data for new project
-            self._cached_data = {}
-            self._cached_images = {}
 
         return (
             next_state,

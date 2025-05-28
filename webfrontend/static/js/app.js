@@ -47,11 +47,8 @@ btnDrop.addEventListener('click', function () { handleCaptureClick.call(this, 'd
 const btnMore = document.getElementById('btn-more');
 btnMore.addEventListener('click', function () { handleCaptureClick.call(this, 'more'); });
 
-const btnNewPart = document.getElementById('btn-new-part');
-btnNewPart.addEventListener('click', function () { handleCaptureClick.call(this, 'new-part'); });
-
-const btnNewProject = document.getElementById('btn-new-project');
-btnNewProject.addEventListener('click', function () { handleCaptureClick.call(this, 'new-project'); });
+const btnNew = document.getElementById('btn-new');
+btnNew.addEventListener('click', function () { handleCaptureClick.call(this, 'new'); });
 
 const btnPrint = document.getElementById('btn-print');
 btnPrint.addEventListener('click', function () {
@@ -65,32 +62,6 @@ document.querySelectorAll(".btn-deffect").forEach((button) => {
         selectedDefect = event.target.id;
         handleCaptureClick.call(this, '');
     });
-});
-
-// FILL PROJECT AND INSPECTOR form submit
-const btnOkProject = document.getElementById('btn-ok-project');
-btnOkProject.addEventListener('click', function () {
-    const projectForm = document.getElementById('project-inspector-form');
-    const project = document.getElementById('project').value;
-    const inspector = document.getElementById('inspector').value;
-    
-    if (project && inspector) {
-        document.getElementById('project').value = '';
-        document.getElementById('inspector').value = '';
-        
-        handleCaptureClick.call(this, '', {
-            project: project,
-            inspector: inspector
-        });
-    } else {
-        if (!project) document.getElementById('project').style.borderColor = 'red';
-        if (!inspector) document.getElementById('inspector').style.borderColor = 'red';
-
-        setTimeout(() => {
-            document.getElementById('project').style.borderColor = '';
-            document.getElementById('inspector').style.borderColor = '';
-        }, 2000);
-    }
 });
 
 // STANDBY form submit

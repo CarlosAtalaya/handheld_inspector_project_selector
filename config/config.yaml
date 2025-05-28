@@ -80,7 +80,7 @@ ROI:  # [rowstart, rowend, colstart, colend]
 
 # Quality criteria
 csv:
-  path: 'handheld/config/'
+  path: 'handheld/config/costumer_quality_criteria.csv'
   defect_keyword: 'Defect'
   quality_keyword: 'Surface Quality'
   finish_keyword: 'Finish'
