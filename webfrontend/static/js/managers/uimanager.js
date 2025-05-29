@@ -4,23 +4,34 @@ export class UIManager {
         this.stateElements = document.querySelectorAll('[data-state]');
         this.sideElements = document.querySelectorAll('[data-side]');
         this.contentElements = document.querySelectorAll('[data-state-content]');
+        this.selectElements = document.querySelectorAll('[data-state-select]');
 
         // Add toggle UI/Report view event listener
         const guiContainer = document.querySelector('.gui-container');
         const a4Container = document.querySelector('.a4-container');
+        const infoContainer = document.querySelector('.info-container');
         const btnToggleReport = document.querySelector('.btn-toggle-report');
         const btnZoomContainer = document.querySelector('.zoom-btn-container');
+        const btnEditContainer = document.querySelector('.edit-btn-container');
+        const btnInfo = document.getElementById('btn-info');
+        const btnCloseInfo = document.getElementById('btn-close-info');
 
         btnToggleReport.addEventListener('click', () => {
             guiContainer.classList.toggle('contracted');
             a4Container.classList.toggle('expanded');
             btnZoomContainer.classList.toggle('unhide');
+            btnEditContainer.classList.toggle('unhide');
+            infoContainer.classList.toggle('hide');
         });
+
+
+        btnInfo.addEventListener('click', () => { infoContainer.classList.toggle('active'); });
+        btnCloseInfo.addEventListener('click', () => { infoContainer.classList.toggle('active'); });
     }
 
     initialize() {
         this.updateUIForState({
-            currentState: 'project_state',
+            currentState: 'inspector_state',
             data: null
         });
     }
@@ -57,10 +68,7 @@ export class UIManager {
         this._toggleStateElements(state.currentState);
         this._toggleSideElements(state.currentState, state.data?.guideline_side);
         this._updateContent(state);
-
-        if (state.data?.project_data) {
-            this._updateProjectData(state.data.project_data);
-        }
+        this._updateSelectsFromState(state);
     }
 
     _toggleStateElements(state) {
@@ -90,51 +98,30 @@ export class UIManager {
         });
     }
 
-    _updateProjectData(projectData) {
-        
-        const defectSelect = document.getElementById('defect-type');
-        
-        if (defectSelect && projectData.defects) {
-            this._clearSelectOptions(defectSelect);
-            defectSelect.innerHTML = '<option value="" disabled selected>DEFECT</option>';
-            projectData.defects.forEach(defect => {
-                const option = document.createElement('option');
-                option.value = defect.toLowerCase();
-                option.textContent = defect;
-                defectSelect.appendChild(option);
-            });
-        }
-
-        const qualitySelect = document.getElementById('surface-quality');
-        
-        if (qualitySelect && projectData.quality) {
-            this._clearSelectOptions(qualitySelect);
-            qualitySelect.innerHTML = '<option value="" disabled selected>(A/B/C)</option>';
-            projectData.quality.forEach(quality => {
-                const option = document.createElement('option');
-                option.value = quality.toLowerCase();
-                option.textContent = quality;
-                qualitySelect.appendChild(option);
-            });
-        }
-
-        const finishSelect = document.getElementById('finish');
-        
-        if (finishSelect && projectData.finish) {
-            this._clearSelectOptions(finishSelect);
-            finishSelect.innerHTML = '<option value="" disabled selected>(VISUAL/PAINTED)</option>';
-            projectData.finish.forEach(finish => {
-                const option = document.createElement('option');
-                option.value = finish.toLowerCase();
-                option.textContent = finish;
-                finishSelect.appendChild(option);
-            });
-        }
-    }
-
-    _clearSelectOptions(selectElement) {
-        while (selectElement.children.length > 1) {
-            selectElement.removeChild(selectElement.lastChild);
-        }
+    _updateSelectsFromState(state) {
+        const selectData = state.data?.select || {};
+        this.selectElements.forEach(select => {
+            const key = select.dataset.stateSelect;
+            const values = selectData[key];
+            if (Array.isArray(values)) {
+                // Create dynamic placeholder
+                const label = key.replace(/-/g, ' ').toUpperCase();
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.disabled = true;
+                placeholder.selected = true;
+                placeholder.textContent = `SELECT ${label}`;
+                // Clear existing options and add placeholder
+                select.innerHTML = '';
+                select.appendChild(placeholder);
+                // Add new options
+                values.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.toLowerCase();
+                    option.textContent = item;
+                    select.appendChild(option);
+                });
+            }
+        });
     }
 }

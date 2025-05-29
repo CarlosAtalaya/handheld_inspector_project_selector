@@ -2,16 +2,16 @@
 class StateManager {
     constructor() {
         this.state = {
-            currentState: 'project_state',
+            currentState: 'inspector_state',
             data: null
         };
         this.subscribers = [];
     }
 
-    async transitionState(payload) {
+    async transitionState(payload, endpoint='') {
+        endpoint = endpoint || `/states/${this.state.currentState}`;
         try {
-            
-            const response = await fetch(`/states/${this.state.currentState}`, {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
                 body: JSON.stringify(payload)
@@ -20,10 +20,11 @@ class StateManager {
             const result = await response.json();
             
             this.state = {
-                currentState: result.nextState,
+                currentState: result.nextState || this.state.currentState,
                 actions: result.actions,
                 data: result.data
             };
+            console.log(this.state.currentState);
 
             this.notifySubscribers();
 

@@ -14,6 +14,7 @@
     --color-9: #353434;
     --color-10: #202020;
     --color-11: rgba(40, 40, 40, 0.744);
+    --color-12: #d0d0d0;
 }
 
 @font-face {
@@ -111,6 +112,7 @@ button:active {
     width: 40px;
     padding: 2px;
     left: var(--a4-margin);
+    box-shadow: 0 0 10px var(--color-3-90);
     
     border-radius: 5px;
     background-color: var(--color-9);
@@ -121,13 +123,49 @@ button:active {
 }
 
 .step-container {
+    position: relative;
     padding: 5px;
     color: var(--color-1);
     text-align: left;
 }
-.step-container p {
+.instruction-container {
+    display: flex;
+    align-items: top;
+}
+.instruction-container p {
     font-weight: bold;
     font-size: 26px;
+}
+
+.info-icon {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    margin-left: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-2);
+    background: var(--color-3);
+    transition: all 0.2s ease-in-out;
+
+    transform: scale(1);
+    transform-origin: center;
+}
+.info-icon svg{
+    stroke: var(--color-2);
+    stroke-width: 8px;
+}
+.info-icon:hover {
+    transform: scale(1.2);
+    background: var(--color-1);
+    box-shadow: 0 0 5px rbga(0, 0, 0, 0.2);
+}
+.info-icon:active {
+    transform: scale(0.95);
 }
 
 .instruction {
@@ -135,6 +173,76 @@ button:active {
 }
 .instruction.active{
     display: block;
+}
+/* INFO CONTAINER */
+.info-container {
+    --top: 20px;
+    position: absolute;
+    top: var(--top);
+    right: 20px;
+    z-index: 10;
+    display: block;
+    max-width: 500px;
+    min-width: 0;
+    margin-bottom: var(--a4-margin);
+    margin-left: var(--a4-margin);
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: var(--color-5);
+    max-height: 80vh;
+    overflow-y: auto;
+
+    transform: translateY(calc(-100% - var(--top)));
+    transition: transform 0.4s cubic-bezier(0.33, 1, 0.68, 1),
+        opacity 0.3s ease-out;
+    opacity: 0;
+}
+.info-container.active {
+    transform: translateY(0);
+    opacity: 1;
+}
+.instruction-h2 {
+    display: none;
+    padding: 2px;
+    padding-left: 10px;
+    padding-right: 4px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: var(--color-3);
+}
+.instruction-h2.active { display: block; }
+.info-p { display: none; }
+.info-p.active { display: block; }
+.close-info-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+.close-info-container #btn-close-info {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    transition: transform 0.3s ease-in-out;
+}
+.close-info-container #btn-close-info:hover {
+    transform: scale(1.2);
+}
+#btn-close-info svg {
+    stroke: var(--color-2);
+    stroke-width: 32px;
+}
+.info-p {
+    border-radius: 5px;
+    padding: 4px;
+    box-sizing: border-box;
+    color: var(--color-2);
+    background-color: var(--color-12);
 }
 
 /* SCREEN CONTAINTER */
@@ -199,7 +307,11 @@ button:active {
     cursor: default;
 }
 
-#standby-form { min-height: 200px; }
+/* INSPECTION STATE */
+#inspector-form { min-height: 150px; }
+
+/* STANDBY STATE */
+#standby-form { min-height: 300px; }
 
 /* SELECTION STATE */
 #defect-selection-form { min-height: 300px; }
@@ -369,7 +481,7 @@ max-width: 100%;
     stroke: var(--color-2);
 }
 
-#btn-ok, #btn-keep, #btn-yes, #btn-ok-project { 
+#btn-ok, #btn-keep, #btn-yes, #btn-ok-inspector { 
     font-size: 28px;
     stroke-width: 32px;
 }
@@ -389,22 +501,14 @@ max-width: 100%;
 #btn-more {
     stroke-width: 32px;
 }
-#btn-print{
+#btn-print, #btn-new {
     width: 70px;
     height: 70px;
     stroke-width: 32px;
     background-color: var(--color-1);
 }
-#btn-new-part, #btn-new-project {
-    width: 70px;
-    height: 70px;
-    background-color: var(--color-1);
-}
-#btn-new-part {
+#btn-new {
     stroke-width: 0.2px;
-}
-#btn-new-project {
-    stroke-width: 32px;
 }
 #btn-capture-frame {
     position: relative;
@@ -510,13 +614,17 @@ max-width: 100%;
 @media (max-width: 800px) {
     .gui-container.contracted {
         width: 0% !important;
+        margin-left: 0;
+    }
+    .info-container.hide {
+        transform: translateY(calc(-100% - var(--top)));
     }
     .a4-container.expanded {
         width: 100% !important;
     }
 }
 @media (max-width: 700px) {
-    .step-container p{
+    .instruction-container p{
         font-size: 16px;
     }
 }
@@ -562,7 +670,7 @@ max-width: 100%;
         align-items: center;
         justify-content: center;
     }
-    .step-container p {
+    .instruction-container p {
         font-size: 16px !important;
     }
     .screen-container {
@@ -587,9 +695,7 @@ max-width: 100%;
         height: 70px;
     }
     .btn-repeat,
-    .btn-end,
-    #btn-new-part,
-    #btn-new-project {
+    .btn-end {
         width: 60px;
         height: 60px;
     }
@@ -639,7 +745,7 @@ max-width: 100%;
 
 .zoom-btn-container {
     position: fixed;
-    top: var(--a4-margin-top);
+    bottom: var(--a4-margin-top);
     z-index: 1;
     right: -100%;
     display: flex;
@@ -657,6 +763,7 @@ max-width: 100%;
     width: 40px;
     border-radius: 5px;
     background-color: var(--color-8);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 1);
 }
 
 .btn-zoom-in svg,
@@ -692,6 +799,75 @@ h1 {
 h1, p {
     margin: 0 0 10px;
 }
+
+/* ----------------------------- BUTTON EDIT -----------------------------*/
+.edit-btn-container {
+    position: fixed;
+    top: var(--a4-margin-top);
+    z-index: 1;
+    right: -100%;
+    display: flex;
+    height: 40px;
+    gap: 40px;
+
+    transition: all 0.5s ease-in-out;
+}
+.edit-btn-container.unhide {
+    right: calc(var(--a4-margin) + 5px);
+}
+.btn-edit {
+    height: 100%;
+    width: 40px;
+    border-radius: 5px;
+    background-color: var(--color-3);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 1);
+}
+.btn-edit svg {
+    stroke: var(--color-2);
+    stroke-width: 16;
+}
+
+/* ----------------------------- BUTTON DELETE -----------------------------*/
+.btn-a4-delete {
+    --radius: 25px;
+    display: none;
+    position: absolute;
+    height: calc(var(--radius) * 2);
+    width: calc(var(--radius) * 2);
+    top: calc(-1 * var(--radius));
+    left: calc(50% - var(--radius));
+    border-radius: 50%;
+    padding: 5px;
+    background-color: #fa003f;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 1);
+
+    align-items: center;
+    justify-content: center;
+
+    transition: all 0.3s ease-in;
+    animation: btnShake 2s infinite ease-in-out;
+    transform-origin: center center;
+}
+.btn-a4-delete.active { display: flex; }
+.btn-a4-delete svg {
+    stroke: var(--color-2);
+    stroke-width: 32px;
+    transition: all 0.3s ease-in;
+}
+.btn-a4-delete:hover {
+    animation: btnShake 1s infinite ease-in-out, btnScale 0.3s forwards;
+    background-color: var(--color-2);
+}
+.btn-a4-delete:hover svg {
+    stroke: var(--color-1);
+}
+@keyframes btnShake {
+    0%, 100% { transform: rotate(0); }
+    6% { transform: rotate(-5deg); }
+    12% { transform: rotate(5deg); }
+    18% { transform: rotate(0); }
+}
+@keyframes btnScale { to { transform: scale(1.2); } }
 
 /* ----------------------------- HEADER -----------------------------*/
 .mc-logo-container {
@@ -978,6 +1154,10 @@ td::after {
         height: 297mm; /* A4 height */
         transform: None;
         page-break-inside: avoid;
+    }
+
+    .btn-a4-delete {
+        display: none;
     }
 
     /* Remove headers and footers */

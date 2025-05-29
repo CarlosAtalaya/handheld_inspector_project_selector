@@ -44,19 +44,14 @@ class FlaskAppWrapper:
         self.handheld_ops_manager = HandheldOpsManager(self.config)
         self.selected_defect = ''
 
-        # Available projects
-        self.available_projects = (
-            self.handheld_ops_manager.get_available_projects()
-        )
-
         # Define endpoints for various states and operations
         self.add_endpoint('/', 'index', self.index)
         self.add_endpoint('/get_image', 'get_image', self.get_image)
         self.add_endpoint('/video_feed', 'video_feed', self.video_feed)
         self.add_endpoint(
-            '/states/project_state',
-            'project_state',
-            self.project_state, methods=['POST']
+            '/states/inspector_state',
+            'inspector_state',
+            self.inspector_state, methods=['POST']
         )
         self.add_endpoint(
             '/states/standby_state',
@@ -102,6 +97,11 @@ class FlaskAppWrapper:
             '/get_image_cache/<cache_key>',
             'get_image_cache',
             self.get_image_cache
+        )
+        self.add_endpoint(
+            '/actions/delete_page',
+            'delete_page',
+            self.delete_page, methods=['POST']
         )
 
     def add_endpoint(self, route, endpoint_name, handler, methods=['GET']):
@@ -171,23 +171,19 @@ class FlaskAppWrapper:
         '''
         return f'{url}?t={time.time()}'
 
-    def project_state(self):
+    def inspector_state(self):
         '''
-        Handles the 'project_state'.
-        Initializes the ops manager for the selected project.
+        Handles the 'inspector_state'.
+        Processes inspector name and initializes the workflow.
+        Returns:
+        - JSON: Response including next state and additional data.
         '''
         data = request.get_json().get('data')
-        project = data['project'].upper()
         inspector = data['inspector']
 
-        next_state, n_inspection = self.handheld_ops_manager.project_state(
-            project, inspector
+        next_state, n_inspection = self.handheld_ops_manager.inspector_state(
+            inspector
         )
-
-        # Get project specific quality criteria data
-        defects = self.handheld_ops_manager.qc.get_defects()
-        quality = self.handheld_ops_manager.qc.get_quality()
-        finish = self.handheld_ops_manager.qc.get_finish()
 
         response = {
             'nextState': next_state,
@@ -203,19 +199,46 @@ class FlaskAppWrapper:
                 'screen': '/video_feed',
                 'report': {
                     'text': {
-                        'project': project,
                         'technician': inspector,
                         'page-number': n_inspection
                     }
                 },
-                'project_data': {
-                    'defects': defects,
-                    'quality': quality,
-                    'finish': finish
+                'select': {
+                    'project': (
+                        self.handheld_ops_manager.get_available_projects()
+                    )
                 },
                 'n_inspection': n_inspection
             }
         }
+        return jsonify(response)
+
+    def delete_page(self):
+        '''
+        Endpoint to handle page deletion.
+        Returns:
+        - JSON: Response including next state and additional data.
+        '''
+        front_response = request.get_json()
+        n_page = front_response['data']['n_page']
+
+        next_state = self.handheld_ops_manager.delete_page(n_page)
+        response = {
+            'nextState': next_state,
+            'actions': {
+                'report': {
+                    'remove_page': True,
+                    'page_number': n_page,
+                    'renumber_pages': True
+                }
+            },
+            'data': {
+                'report': {
+                    'page_number': n_page
+                }
+            }
+        }
+
         return jsonify(response)
 
     def standby_state(self):
@@ -235,15 +258,26 @@ class FlaskAppWrapper:
             inspector
         ) = (
             self.handheld_ops_manager.standby_state(
+                data['project'],
                 data['inspected-part'],
                 data['serial-number']
             )
         )
+
+        # Get project specific quality criteria data
+        defects = self.handheld_ops_manager.qc.get_defects()
+        quality = self.handheld_ops_manager.qc.get_quality()
+        finish = self.handheld_ops_manager.qc.get_finish()
+
         # Prepare data for the report
-        data['date'] = current_date
-        data['page-number'] = n_inspection
-        data['project'] = project
-        data['technician'] = inspector
+        report_data = {
+            'project': project,
+            'technician': inspector,
+            'date': current_date,
+            'inspected-part': data['inspected-part'],
+            'serial-number': data['serial-number'],
+            'page-number': n_inspection
+        }
 
         response = {
             'nextState': next_state,
@@ -257,7 +291,12 @@ class FlaskAppWrapper:
             },
             'data': {
                 'screen': '/video_feed',
-                'report': {'text': data},
+                'report': {'text': report_data},
+                'select': {
+                    'defect-type': defects,
+                    'surface-quality': quality,
+                    'finish': finish
+                },
                 'n_inspection': n_inspection
             }
         }
@@ -524,9 +563,10 @@ class FlaskAppWrapper:
             'nextState': next_state,
             'actions': {
                 'report': {
-                    'add_page': action in ['more', 'new-part', 'new-project'],
+                    'add_page': action in ['more', 'new'],
                     'remove_page': False,
                     'update_page': action == 'more',
+                    'remove_all': action == 'new',
                     'page_number': n_inspection
                 }
             },
@@ -536,7 +576,7 @@ class FlaskAppWrapper:
                     'text': {**cached_data, 'page-number': n_inspection},
                     'images': {k: f'/get_image_cache/{k}' for k in cached_images}  # noqa
                 },
-                'n_inspection': n_inspection,
+                'n_inspection': n_inspection
             }
         }
 
@@ -548,10 +588,7 @@ class FlaskAppWrapper:
         Returns:
         - Rendered template: Renders the 'index.html' template.
         '''
-        return render_template(
-            'index.html',
-            projects=self.available_projects
-        )
+        return render_template('index.html')
 
     def run(self):
         '''

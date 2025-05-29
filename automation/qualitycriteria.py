@@ -26,22 +26,23 @@ class QualityCriteria():
         Returns:
         - list: Available project names based on CSV files
         '''
-        if not os.path.exists(self.csv_base_path):
-            return []
-
-        csv_pattern = os.path.join(self.csv_base_path, '*.csv')
-        csv_files = glob.glob(csv_pattern)
-
         projects = []
-        for csv_file in csv_files:
-            filename = os.path.basename(csv_file)
-            # Get project name: everything before the first '_'
-            if '_' in filename:
-                project_name = filename.split('_')[0].upper()
-                if project_name not in projects:
-                    projects.append(project_name)
 
-        return sorted(projects)
+        if os.path.exists(self.csv_base_path):
+            csv_pattern = os.path.join(self.csv_base_path, '*.csv')
+            csv_files = glob.glob(csv_pattern)
+
+            for csv_file in csv_files:
+                filename = os.path.basename(csv_file)
+                # Get project name: everything before the first '_'
+                if '_' in filename:
+                    project_name = filename.split('_')[0].upper()
+                    if project_name not in projects:
+                        projects.append(project_name)
+
+            projects = sorted(projects)
+
+        return projects
 
     def set_project(self, project_name):
         '''

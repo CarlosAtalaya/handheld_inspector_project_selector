@@ -19,7 +19,7 @@ statemanager.subscribe(state => {
 });
 
 // Initialize Report Manager and subscribe to event changes
-const reportManager = new ReportManager('template.html');
+const reportManager = new ReportManager('template.html', statemanager);
 reportManager.initialize();
 statemanager.subscribe(state => {
     reportManager.updateReportForState(state)
@@ -47,11 +47,8 @@ btnDrop.addEventListener('click', function () { handleCaptureClick.call(this, 'd
 const btnMore = document.getElementById('btn-more');
 btnMore.addEventListener('click', function () { handleCaptureClick.call(this, 'more'); });
 
-const btnNewPart = document.getElementById('btn-new-part');
-btnNewPart.addEventListener('click', function () { handleCaptureClick.call(this, 'new-part'); });
-
-const btnNewProject = document.getElementById('btn-new-project');
-btnNewProject.addEventListener('click', function () { handleCaptureClick.call(this, 'new-project'); });
+const btnNew = document.getElementById('btn-new');
+btnNew.addEventListener('click', function () { handleCaptureClick.call(this, 'new'); });
 
 const btnPrint = document.getElementById('btn-print');
 btnPrint.addEventListener('click', function () {
@@ -67,29 +64,20 @@ document.querySelectorAll(".btn-deffect").forEach((button) => {
     });
 });
 
-// FILL PROJECT AND INSPECTOR form submit
-const btnOkProject = document.getElementById('btn-ok-project');
-btnOkProject.addEventListener('click', function () {
-    const projectForm = document.getElementById('project-inspector-form');
-    const project = document.getElementById('project').value;
-    const inspector = document.getElementById('inspector').value;
+// FILL INSPECTOR form submit
+const inspectorForm = document.getElementById('inspector-form');
+inspectorForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const inspector = formData.get('inspector')?.trim();
     
-    if (project && inspector) {
-        document.getElementById('project').value = '';
-        document.getElementById('inspector').value = '';
-        
-        handleCaptureClick.call(this, '', {
-            project: project,
+    if (inspector) {
+        this.reset();
+
+        const submitButton = document.getElementById('btn-ok-inspector');
+        handleCaptureClick.call(submitButton, '', {
             inspector: inspector
         });
-    } else {
-        if (!project) document.getElementById('project').style.borderColor = 'red';
-        if (!inspector) document.getElementById('inspector').style.borderColor = 'red';
-
-        setTimeout(() => {
-            document.getElementById('project').style.borderColor = '';
-            document.getElementById('inspector').style.borderColor = '';
-        }, 2000);
     }
 });
 
@@ -100,15 +88,18 @@ formSubmit.addEventListener('submit', function(e) {
     const formData = new FormData(this);
 
     // Get values
+    const project = formData.get('project')?.trim();
     const partNumber = formData.get('partnumber')?.trim();
     const serialNumber = formData.get('serialnumber')?.trim();
 
-    if (partNumber && serialNumber) {
-        e.target.reset();  // clear form on advance
-    }
+    e.target.reset();  // clear form on advance
 
     // Keys should match with template.html classes (or later modified in backend)
-    handleCaptureClick.call(this, '', {'inspected-part': partNumber, 'serial-number': serialNumber});
+    handleCaptureClick.call(this, '', {
+        'project': project,
+        'inspected-part': partNumber, 
+        'serial-number': serialNumber
+    });
 });
 
 // DEFECT SELECTION form submit

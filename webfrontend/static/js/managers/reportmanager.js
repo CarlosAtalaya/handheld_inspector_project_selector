@@ -2,13 +2,24 @@
 import { ZoomController } from "../utils/zoom.js";
 
 export class ReportManager {
-    constructor(templateName) {
+    constructor(templateName, statemanager) {
         this.templatePath = `static/templates/${templateName}`
         this.a4Document = document.querySelector('.a4-document');
         this.a4Template = null;
+        this.statemanager = statemanager;
 
         // Init Zoom Controller
         this.ZoomController = new ZoomController(".a4-document", ".btn-zoom-in", ".btn-zoom-out");
+
+        // Add Edit Mode 
+        this.editMode = false;
+        document.getElementById('btn-edit').addEventListener('click', () => {
+            // toggle edit mode
+            this.editMode = !this.editMode;
+            // toggle delete buttons activation
+            const deleteButtons = document.querySelectorAll('.btn-a4-delete');
+            deleteButtons.forEach(btn => { btn.classList.toggle('active'); })
+        })
     }
 
     async initialize() {
@@ -38,9 +49,34 @@ export class ReportManager {
     addPage(pageNumber) {
         const a4PageClone = this.a4Template.cloneNode(true);
         a4PageClone.id = `a4-page-${pageNumber}`;
+
+        // Create remove btn for page
+        const deleteBtn = this.addRemoveButton(pageNumber);
+        if (this.editMode) { deleteBtn.classList.toggle('active'); }
+        // Append button to the page
+        a4PageClone.appendChild(deleteBtn);
+
         // this.a4Document.appendChild(a4PageClone);
         this.a4Document.prepend(a4PageClone); // add new page at top of document
         return a4PageClone
+    }
+
+    addRemoveButton(pageNumber) {
+        // Get and clone delete button template
+        const buttonTemplate = document.getElementById('delete-btn-template');
+        const deleteBtn = buttonTemplate.content.cloneNode(true).firstElementChild;
+        deleteBtn.addEventListener('click', () => {
+            // Report backend
+            const payload = {
+                action: 'delete_page',
+                data: {
+                    'n_page': pageNumber
+                }
+            }
+            this.statemanager.transitionState(payload, '/actions/delete_page')
+        });
+
+        return deleteBtn
     }
 
     getPage(pageNumber) {
@@ -59,6 +95,19 @@ export class ReportManager {
         }
     }
 
+    renumberPages(n_page) {
+        const pages = this.a4Document.getElementsByClassName('a4-page');
+        for (let i = 0; i < (pages.length + 1 - n_page); i++) {
+            // Compute new page number and update id
+            const newPageNumber = pages.length - i
+            pages[i].id = `a4-page-${newPageNumber}`;
+            
+            // Update all references to page number on the page
+            const pageNumberElements = pages[i].querySelectorAll('.fill-page-number');
+            pageNumberElements.forEach(el => { el.textContent = newPageNumber; })
+        }
+    }
+
     isNonEmptyReport(report) {
         return !!(
             report && (
@@ -68,12 +117,14 @@ export class ReportManager {
     }
 
     updateReportForState(state) {
-        // Clean all former pages on state1
-        if (state.currentState === 'standby_state') this.cleanPages();
 
         if (state.actions?.report) {
             const reportActions = state.actions.report;
-
+            
+            // Remove all pages
+            if (reportActions.remove_all) {
+                this.cleanPages();
+            }
             // Remove page
             if (reportActions.remove_page) {
                 this.removePage(reportActions.page_number);
@@ -81,6 +132,10 @@ export class ReportManager {
             // Add page
             if (reportActions.add_page) {
                 this.addPage(reportActions.page_number);
+            }
+            // Renumber pages
+            if (reportActions.renumber_pages) {
+                this.renumberPages(state.data.report.page_number);
             }
 
             // Update content
